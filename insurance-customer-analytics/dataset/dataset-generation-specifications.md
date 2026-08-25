@@ -38,7 +38,7 @@ The company uses customer data to understand customer behavior, improve marketin
 
 # Dataset Design Principles
 
-The dataset must simulate a realistic business environment.
+The dataset is designed to simulate a realistic business environment.
 
 General principles:
 
@@ -47,21 +47,41 @@ General principles:
 - Data must not be generated randomly without business meaning.
 - Tables must support analytical use cases.
 - Source tables must contain business events, while analytical metrics should be calculated later.
-- Customer acquisition, marketing engagement and sales channels must be treated as separate business concepts.
+- Marketing attribution and sales channels must remain separate concepts.
+- Events outside the observation window must not be artificially moved inside the observed period.
 
 The dataset represents a simplified insurance ecosystem composed of:
 
-Customer  
-↓  
-Marketing Interaction  
-↓  
-Quote  
-↓  
-Policy Purchase  
-↓  
+```text
+Customer
+    ↓
+Marketing Interaction
+    ↓
+Quote
+    ↓
+Policy Purchase
+    ↓
 Renewal
+```
 
-Not every customer interaction generates a quote, and not every quote generates a policy.
+---
+
+## Observation Window
+
+The synthetic dataset represents business activity observed between:
+
+- January 1, 2024
+- December 31, 2026
+
+Customer registrations, quotes, interactions and policy purchases are generated within this observation window.
+
+Events expected to occur after December 31, 2026 are not artificially moved to the end of the observation period and are not included as observed business events.
+
+Policy coverage dates may extend beyond the observation window when a policy is purchased before December 31, 2026.
+
+For example, a Travel policy purchased in December 2026 may have a coverage start date in January 2027 if the insured trip occurs after the purchase date.
+
+This distinction prevents artificial concentrations of business events at the end of the observation period and preserves realistic temporal behavior.
 
 ---
 
@@ -78,7 +98,7 @@ Rules:
 - Do not use real people.
 - International names are allowed.
 - Italian and foreign names can be mixed.
-- Email addresses, if generated in future extensions, must be fake.
+- Email addresses, if generated, must be fake.
 
 Examples:
 
@@ -108,23 +128,6 @@ Fields:
 - region
 - city
 - registration_date
-- acquisition_channel
-
----
-
-## Customer Population Growth
-
-The customer base grows progressively over the observation period.
-
-Target new customer volumes:
-
-- 2024: approximately 20,000 customers
-- 2025: approximately 70,000 customers
-- 2026: approximately 110,000 customers
-
-Growth should not be distributed uniformly across months.
-
-The first year should represent an earlier growth stage of the company, with relatively low customer acquisition at the beginning of the period and increasing volumes over time.
 
 ---
 
@@ -168,37 +171,15 @@ The geography represents customer residence, not nationality.
 
 Registration date must always respect:
 
-`registration_date <= first_purchase_date`
+```text
+registration_date <= first_purchase_date
+```
 
 A customer cannot purchase a policy before being registered.
 
 First purchase date is not stored in `customers.csv`.
 
 It must be calculated from `policies.csv`.
-
----
-
-## Customer Acquisition Channel
-
-The acquisition channel represents how the customer initially entered the Wossist ecosystem.
-
-Available values:
-
-- Organic
-- Paid Digital
-- Agency
-- Partner
-- Referral
-
-The acquisition channel is a customer-level attribute and remains associated with the customer after the initial acquisition.
-
-It must be distinguished from both marketing interaction channels and sales channels.
-
-For example, a customer initially acquired through Paid Digital may later purchase a policy through Web, Agency or Assisted Sales.
-
-Similarly, a customer may later be contacted through an Email or Phone marketing campaign without changing the original acquisition channel.
-
-Phone is therefore considered a marketing/customer interaction channel rather than a standalone customer acquisition source within the current Wossist data model.
 
 ---
 
@@ -228,30 +209,6 @@ Products:
 | HOME001 | Home Insurance | Home | Standard |
 | HOME002 | Home Insurance | Home | Premium |
 
-Travel Single Trip represents the largest component of the Wossist customer portfolio.
-
----
-
-# Customer Product Behaviour
-
-The synthetic customer base should reproduce different purchasing behaviours.
-
-Indicative customer distribution:
-
-- Approximately 65% of customers purchase one Travel Single Trip policy only.
-- Approximately 5% purchase multiple Travel Single Trip policies.
-- Approximately 10% own Annual Travel Insurance.
-- Some Annual Travel customers may previously have purchased Single Trip policies before switching to the annual product.
-- Approximately 10% are Home-only customers.
-- Approximately 10% are Pet-only customers.
-- Approximately 5% show cross-selling behaviour across multiple business lines.
-
-Within Home and Pet portfolios, Standard products should remain more common than Premium products.
-
-Cross-selling should remain relatively limited.
-
-Most customers should own products from only one business line, while customers owning three business lines should be uncommon.
-
 ---
 
 # Sales Channel Rules
@@ -265,11 +222,9 @@ Available sales channels:
 - Partner
 - Assisted Sales
 
-Sales channel represents where a quote or purchase was completed.
+Sales channel represents where the purchase was completed.
 
 Marketing channel and sales channel are separate concepts.
-
-A customer's acquisition channel does not necessarily correspond to the sales channel used for subsequent transactions.
 
 ---
 
@@ -293,29 +248,17 @@ Fields:
 - end_date
 - campaign_owner_id
 
-Campaigns may support different objectives such as:
-
-- Acquisition
-- Retention
-- Upsell
-- Cross Sell
-- Renewal
-
-Campaign performance should not be uniformly positive.
-
-Some campaigns may generate limited results or perform worse than comparable non-campaign periods, allowing realistic campaign effectiveness analysis.
-
 ---
 
 ## Campaign Naming Convention
 
 Campaign names must be business-readable.
 
-Include:
+Names should include:
 
 - Product or business line
 - Campaign purpose
-- Period/year when relevant
+- Period or year when relevant
 
 Examples:
 
@@ -334,8 +277,6 @@ Campaign IDs remain technical identifiers.
 
 Travel campaigns must follow realistic seasonality.
 
-Travel represents the business line with the highest campaign activity.
-
 ### Spring Holidays
 
 Relevant periods include:
@@ -344,57 +285,44 @@ Relevant periods include:
 - 25 April
 - 1 May
 
-Campaign activity should generally start before the expected travel period.
-
 Typical campaign period:
 
 - February-March
 
----
-
 ### Summer Travel
 
-Multiple summer campaigns are allowed.
+Multiple campaigns are allowed.
 
-Early booking campaigns:
+Typical periods include:
+
+**Early booking**
 
 - April-May
 
-Peak season campaigns:
+**Peak season**
 
 - June-July
 
-Destination-specific campaigns may target:
+Specific destination campaigns may target destinations such as:
 
 - USA
 - Extra-EU destinations
-- European destinations
-
-Summer campaigns may target different travel behaviours rather than representing a single generic summer campaign.
-
----
 
 ### Christmas and New Year
-
-Campaign activity should generally precede the holiday period.
 
 Typical campaign period:
 
 - October-November
 
----
+### Annual Renewal Campaigns
 
-### Annual Travel Campaigns
-
-Annual Travel campaigns may target frequent travellers or customers who previously purchased multiple Single Trip policies.
-
-Renewal-related activities should be linked to policy expiration periods.
+Renewal campaigns are based on policy expiration periods.
 
 ---
 
 ## Pet Insurance
 
-Pet Insurance has more limited seasonality.
+Pet Insurance has limited seasonality.
 
 Main campaign types include:
 
@@ -407,7 +335,7 @@ Main campaign types include:
 
 ## Home Insurance
 
-Home Insurance has more limited seasonality.
+Home Insurance has limited seasonality.
 
 Main campaign types include:
 
@@ -424,13 +352,12 @@ Main campaign types include:
 
 Granularity:
 
-One row = one customer interaction event.
+One row = one customer interaction.
 
 Possible interactions include:
 
 - Email sent
 - Email opened
-- Email clicked
 - Phone call
 - SMS
 
@@ -445,10 +372,6 @@ Fields:
 - outcome
 
 Interactions may or may not generate a quote.
-
-When an interaction belongs to a marketing campaign, `campaign_id` links the interaction to `campaigns.csv`.
-
-Phone interactions can represent outbound marketing, retention or sales activities directed at customers already present in the Wossist ecosystem.
 
 ---
 
@@ -475,11 +398,11 @@ A quote can:
 - Convert into a policy
 - Not convert into a policy
 
-Conversion status must not be stored directly.
+Conversion status is not stored directly.
 
-It must be calculated by matching `quotes.csv` with `policies.csv` through `quote_id`.
+It must be calculated by matching quotes with policies through `quote_id`.
 
-Every policy purchase must originate from a quote.
+Quote dates must fall within the dataset observation window.
 
 ---
 
@@ -504,11 +427,13 @@ Fields:
 - campaign_id
 - premium_amount
 
-Policies represent completed purchases.
+Every policy must originate from a valid quote.
 
-Policies are considered non-refundable within the simplified Wossist business model.
+Policy purchase dates must fall within the dataset observation window.
 
-This avoids introducing cancellation and refund processes into the current analytical scope.
+Policy start and end dates may extend beyond the observation window when the policy was purchased within the observed period.
+
+An event expected to occur after the observation window must not be artificially assigned to December 31, 2026.
 
 ---
 
@@ -516,62 +441,22 @@ This avoids introducing cancellation and refund processes into the current analy
 
 Specific attributes are stored in `policies.csv`.
 
-Fields may contain NULL values depending on the product.
+Fields may contain NULL values depending on the insurance product.
 
-Travel:
+### Travel
 
 - destination
 - trip_duration_days
 
-Pet:
+### Pet
 
 - pet_type
 - pet_age
 
-Home:
+### Home
 
 - property_value
 - property_size
-
-Product-specific fields should only contain values when relevant to the associated business line.
-
----
-
-# Pricing Rules
-
-Policy premiums must reflect plausible differences between products and customer scenarios.
-
-## Travel
-
-Single Trip pricing may depend on:
-
-- Destination
-- Trip duration
-
-European destinations should generally have lower premiums than long-haul or higher-risk destinations.
-
-For example, a short trip to Germany may cost significantly less than a trip to the USA.
-
-Annual Travel policies should generally have higher premiums than individual Single Trip policies.
-
----
-
-## Pet
-
-Premium products should have higher average premiums than Standard products.
-
-Pricing may also vary according to pet characteristics.
-
----
-
-## Home
-
-Premium products should have higher average premiums than Standard products.
-
-Pricing may vary according to property characteristics such as:
-
-- Property value
-- Property size
 
 ---
 
@@ -579,38 +464,22 @@ Pricing may vary according to property characteristics such as:
 
 Sales channel and marketing attribution are separate concepts.
 
-`campaign_id` represents explicit marketing attribution when a reliable campaign reference exists.
+## Website
 
-Not every quote or policy must have campaign attribution.
+Possible scenarios:
 
----
+- Direct purchase
+- Campaign-driven purchase
 
-## Web
-
-Web purchases can be:
-
-- Direct
-- Campaign-driven
-
-Therefore:
-
-`campaign_id` may be NULL or populated.
-
-Examples of direct attribution may include:
-
-- Promo codes
-- Campaign identifiers
-- Tracking references
+`campaign_id` can therefore be NULL.
 
 ---
 
 ## Agency
 
-Purchases are completed through the agency network.
+Purchases are normally completed offline.
 
-Within the current simplified business model:
-
-`campaign_id` should be NULL.
+`campaign_id` should generally be NULL.
 
 ---
 
@@ -618,47 +487,27 @@ Within the current simplified business model:
 
 Purchases are completed through external distribution partners.
 
-Within the current simplified business model:
-
-`campaign_id` should be NULL.
+`campaign_id` should generally be NULL.
 
 ---
 
 ## Assisted Sales
 
-Assisted Sales represents phone/contact center supported purchases.
+Assisted Sales represents phone or contact center sales.
 
 Campaign attribution should normally exist.
 
 Example:
 
-Marketing campaign  
-↓  
-Phone operator contact  
-↓  
-Quote  
-↓  
-Policy purchase
-
-The customer's original acquisition channel remains unchanged.
-
-For example, a customer originally acquired through Paid Digital can later purchase a policy through Assisted Sales following a Phone campaign.
-
----
-
-# Indirect Marketing Attribution
-
-Not every marketing influence must be explicitly stored in the policy.
-
-When direct attribution is unavailable, analytical attribution can potentially be estimated by matching customer interactions with subsequent quotes or purchases.
-
-Possible future analytical approaches include:
-
-- Last interaction attribution
-- First interaction attribution
-- Time-window attribution
-
-These are analytical rules and should not be stored as source-data facts unless explicit attribution exists.
+```text
+Marketing Campaign
+        ↓
+Phone Operator Contact
+        ↓
+Quote
+        ↓
+Policy Purchase
+```
 
 ---
 
@@ -682,9 +531,7 @@ Only successful renewals are stored.
 
 Non-renewals are not stored as events.
 
-Travel Single Trip policies cannot generate renewal events.
-
-Recurring products such as Annual Travel, Pet and Home may generate renewals when applicable.
+Renewal eligibility must therefore be reconstructed analytically using policy expiration dates and the observation period.
 
 ---
 
@@ -699,10 +546,11 @@ Possible churn logic includes:
 - Policy expiration
 - Absence of renewal
 - Time since last purchase
+- Customer purchase history
 
-For recurring products, potential churn can be identified by comparing eligible expiring policies with successful renewal events.
+The observation window must be considered when determining churn.
 
-For transactional products such as Travel Single Trip, customer inactivity can instead be evaluated using purchase history and time since last purchase.
+A customer whose policy has not yet reached its renewal date by the end of the observation period cannot automatically be classified as churned.
 
 Derived analytical tables may include:
 
@@ -712,30 +560,9 @@ Derived analytical tables may include:
 
 ---
 
-# Dataset Validation
-
-The generated datasets must be validated before being used in analytics projects.
-
-Validation should include:
-
-- Primary key uniqueness
-- Referential integrity
-- Date consistency
-- Customer distribution
-- Product and purchasing behaviour
-- Pricing consistency
-- Quote-to-policy conversion
-- Marketing attribution
-- Campaign timing and seasonality
-- Renewal consistency
-
-The validation framework is maintained separately from the source datasets and can evolve together with the Wossist ecosystem.
-
----
-
 # Future Dataset Extensions
 
-The model can be extended with:
+The model can be extended with additional datasets such as:
 
 - Customer feedback
 - Surveys
@@ -744,4 +571,4 @@ The model can be extended with:
 - Web interactions
 - Employee operations data
 
-Extensions must maintain compatibility with the existing customer lifecycle model and preserve the distinction between source business events and analytically derived information.
+Extensions must maintain compatibility with the existing customer lifecycle model and observation-window rules.
