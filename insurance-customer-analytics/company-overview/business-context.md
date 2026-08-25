@@ -37,17 +37,20 @@ The customer base includes different segments based on:
 - Customer engagement level
 
 ---
-
 ## Sales & Distribution Channels
 
-Customers can purchase Wossist products through multiple channels, including:
+Customers can purchase Wossist products through multiple sales channels, including:
 
-- Digital channels
-- Partnerships
-- Direct sales channels
+- Website
+- Agency
+- Partner
+- Assisted Sales
+
+Each channel represents where the customer completes the quote and purchase process.
+
+Sales channels are distinct from marketing and customer engagement channels, which describe how customers are acquired, contacted or influenced before purchase.
 
 Understanding the contribution and performance of each channel is a key component of the customer analytics ecosystem.
-
 ---
 
 ## Business Objectives
