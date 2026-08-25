@@ -4,7 +4,11 @@
 
 This document describes the structure, meaning and business rules of the synthetic datasets created for the Wossist Insurance Customer Analytics case study.
 
-The dataset simulates an insurance company customer ecosystem where customers interact with marketing campaigns, request quotes, purchase policies and potentially renew their products.
+The dataset simulates an insurance customer ecosystem where customers interact with marketing campaigns, request quotes, purchase policies and potentially renew recurring products.
+
+The main observation window covers business events from January 1, 2024 to December 31, 2026.
+
+Policy coverage dates may extend beyond the observation window when the corresponding policy was purchased within the observed period.
 
 ---
 
@@ -16,7 +20,7 @@ One row represents one customer.
 
 ## Description
 
-Master customer table containing demographic, geographic and acquisition information.
+Master customer table containing demographic and geographic information.
 
 | Column | Data Type | Description | Rules |
 |---|---|---|---|
@@ -28,20 +32,7 @@ Master customer table containing demographic, geographic and acquisition informa
 | country | String | Customer country of residence | Mainly Italy |
 | region | String | Customer region of residence | Used for geographic analysis |
 | city | String | Customer city of residence | Used for mapping |
-| registration_date | Date | Date when customer entered Wossist ecosystem | Must be <= first purchase date |
-| acquisition_channel | String | Initial customer acquisition source | See acquisition channel values |
-
----
-
-## acquisition_channel values
-
-| Value | Description |
-|---|---|
-| Organic | Direct traffic / brand awareness |
-| Paid Digital | Online advertising acquisition |
-| Agency | Customer acquired through agency network |
-| Partner | External partner acquisition |
-| Referral | Existing customer referral |
+| registration_date | Date | Date when customer entered the Wossist ecosystem | Must be <= first purchase date |
 
 ---
 
@@ -75,8 +66,6 @@ One row represents one sales channel.
 | sales_channel_id | String | Unique channel identifier | Primary key |
 | sales_channel_name | String | Sales channel description | Web, Agency, Partner, Assisted Sales |
 
----
-
 ## Sales Channel Values
 
 | Channel | Description |
@@ -101,13 +90,13 @@ Marketing activities launched to acquire, retain or grow customers.
 | Column | Data Type | Description | Rules |
 |---|---|---|---|
 | campaign_id | String | Unique campaign identifier | Primary key |
-| campaign_name | String | Business-readable campaign name | Include product and period when relevant |
+| campaign_name | String | Business-readable campaign name | Includes product and period when relevant |
 | business_line | String | Target business area | Travel, Pet, Home |
 | product_id | String | Main promoted product | Foreign key to products |
 | objective | String | Marketing goal | Acquisition, Retention, Upsell, Cross Sell, Renewal |
 | marketing_channel | String | Communication channel | Email, Phone, Social, Search |
-| start_date | Date | Campaign start date | |
-| end_date | Date | Campaign end date | |
+| start_date | Date | Campaign start date | Within observation period |
+| end_date | Date | Campaign end date | >= start_date |
 | campaign_owner_id | String | Responsible employee | Foreign key to operators |
 
 ---
@@ -136,9 +125,9 @@ One row represents one customer interaction event.
 | Column | Data Type | Description | Rules |
 |---|---|---|---|
 | interaction_id | String | Unique interaction identifier | Primary key |
-| customer_id | String | Customer involved | Foreign key |
+| customer_id | String | Customer involved | Foreign key to customers |
 | campaign_id | String | Related campaign | Nullable |
-| interaction_date | Date | Date of interaction | |
+| interaction_date | Date | Date of interaction | Within observation window |
 | interaction_channel | String | Communication channel | Email, Phone, SMS, Web |
 | interaction_type | String | Type of action | Sent, Opened, Clicked, Call |
 | outcome | String | Interaction result | Positive, Negative, No Response |
@@ -151,15 +140,23 @@ One row represents one customer interaction event.
 
 One row represents one insurance quote request.
 
+## Description
+
+Quote events represent explicit customer interest in an insurance product before purchase.
+
 | Column | Data Type | Description | Rules |
 |---|---|---|---|
 | quote_id | String | Unique quote identifier | Primary key |
-| customer_id | String | Customer requesting quote | Foreign key |
-| product_id | String | Requested product | Foreign key |
-| quote_date | Date | Quote creation date | |
-| sales_channel_id | String | Channel where quote was created | Foreign key |
+| customer_id | String | Customer requesting quote | Foreign key to customers |
+| product_id | String | Requested product | Foreign key to products |
+| quote_date | Date | Quote creation date | Within observation window |
+| sales_channel_id | String | Channel where quote was created | Foreign key to sales channels |
 | campaign_id | String | Campaign attribution | Nullable |
-| estimated_premium | Decimal | Estimated policy premium | |
+| estimated_premium | Decimal | Estimated policy premium | Positive value |
+
+A quote may or may not result in a policy.
+
+Quote conversion must be calculated by matching `quote_id` with `policies.csv`.
 
 ---
 
@@ -169,26 +166,36 @@ One row represents one insurance quote request.
 
 One row represents one purchased insurance policy.
 
+## Description
+
+Policies represent successful customer conversions following an insurance quote.
+
 | Column | Data Type | Description | Rules |
 |---|---|---|---|
 | policy_id | String | Unique policy identifier | Primary key |
-| customer_id | String | Policy holder | Foreign key |
-| quote_id | String | Originating quote | Required |
-| product_id | String | Purchased product | Foreign key |
-| purchase_date | Date | Policy purchase date | |
-| policy_start_date | Date | Coverage start date | |
-| policy_end_date | Date | Coverage end date | |
-| sales_channel_id | String | Purchase channel | Foreign key |
+| customer_id | String | Policy holder | Foreign key to customers |
+| quote_id | String | Originating quote | Required; foreign key to quotes |
+| product_id | String | Purchased product | Foreign key to products |
+| purchase_date | Date | Policy purchase date | Within observation window |
+| policy_start_date | Date | Coverage start date | May occur after observation window |
+| policy_end_date | Date | Coverage end date | May occur after observation window |
+| sales_channel_id | String | Purchase channel | Foreign key to sales channels |
 | campaign_id | String | Marketing attribution | Nullable |
-| premium_amount | Decimal | Paid premium amount | |
+| premium_amount | Decimal | Paid premium amount | Positive value |
+
+The policy purchase must occur on or after the originating quote date.
+
+Policy coverage can begin after the purchase date.
+
+Policies purchased within the observation window may therefore have coverage dates extending into 2027.
 
 ---
 
-## Product specific attributes
+## Product Specific Attributes
 
-Nullable fields used depending on insurance product.
+Nullable fields are used depending on the insurance product.
 
-| Column | Applies to | Description |
+| Column | Applies To | Description |
 |---|---|---|
 | destination | Travel | Travel destination |
 | trip_duration_days | Travel | Number of travel days |
@@ -205,22 +212,37 @@ Nullable fields used depending on insurance product.
 
 One row represents one successful renewal.
 
+## Description
+
+Renewal events represent successful renewals of recurring insurance products.
+
 | Column | Data Type | Description | Rules |
 |---|---|---|---|
 | renewal_id | String | Unique renewal identifier | Primary key |
-| policy_id | String | Renewed policy | Foreign key |
-| customer_id | String | Customer renewing product | Foreign key |
-| renewal_date | Date | Renewal date | |
-| premium_amount | Decimal | Renewal premium | |
+| policy_id | String | Renewed policy | Foreign key to policies |
+| customer_id | String | Customer renewing product | Foreign key to customers |
+| renewal_date | Date | Renewal date | Successful renewal event |
+| premium_amount | Decimal | Renewal premium | Positive value |
+
+Only successful renewals are stored.
+
+The absence of a renewal record does not automatically represent churn.
+
+A policy must first become eligible for renewal within the relevant observation period before a non-renewal can be interpreted analytically.
 
 ---
 
 # Business Rules Summary
 
 - All data is synthetic.
+- The primary observation window is January 1, 2024 to December 31, 2026.
 - Customer residence is mainly Italy.
 - Registration date cannot occur after first purchase.
 - Quote conversion is calculated by matching quotes and policies.
-- Churn is not stored; it is calculated analytically.
+- Every policy originates from a valid quote.
+- Policy purchases occur within the observation window.
+- Policy coverage dates may extend beyond the observation window.
+- Events occurring after the observation window are not artificially moved to December 31, 2026.
+- Churn is not stored and must be calculated analytically.
 - Renewals represent only successful renewals.
 - Marketing attribution and sales channel are separate concepts.
