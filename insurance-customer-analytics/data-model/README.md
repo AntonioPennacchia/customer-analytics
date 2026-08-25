@@ -16,7 +16,9 @@ The Wossist data model includes the following main entities:
 
 - Customers
 - Products
+- Sales Channels
 - Campaigns
+- Operators
 - Customer Interactions
 - Quotes
 - Policies
