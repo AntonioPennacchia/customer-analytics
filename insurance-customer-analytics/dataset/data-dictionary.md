@@ -42,7 +42,6 @@ Master customer table containing demographic, geographic and acquisition informa
 | Agency | Customer acquired through agency network |
 | Partner | External partner acquisition |
 | Referral | Existing customer referral |
-| Phone Campaign | Customer acquired through assisted campaign |
 
 ---
 
