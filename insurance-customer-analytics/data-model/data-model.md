@@ -23,7 +23,9 @@ Examples of customer information:
 - Demographic attributes
 - Geographic information
 - Customer profile information
-- Customer lifecycle attributes
+- Customer acquisition information
+
+Customer lifecycle metrics such as first purchase date, customer status or customer value are not stored directly in the customer entity and can be derived analytically from customer behavior.
 
 ---
 
@@ -37,7 +39,24 @@ Main product categories include:
 - Pet Insurance
 - Home Insurance
 
-Products contain information related to product categories, coverage types and business lines.
+Products contain information related to product categories, product types and business lines.
+
+---
+
+## Sales Channel
+
+Represents the channel through which a customer requests a quote or completes an insurance purchase.
+
+Main sales channels include:
+
+- Website
+- Agency
+- Partner
+- Assisted Sales
+
+Sales channels describe where the commercial transaction takes place and are therefore distinct from marketing and customer engagement channels.
+
+This distinction allows Wossist to separately analyze how customers are influenced and where they ultimately complete their purchase.
 
 ---
 
@@ -51,8 +70,28 @@ Campaigns can support different business objectives, including:
 - Cross-selling
 - Upselling
 - Retention activities
+- Renewal activities
 
-Each campaign can generate multiple customer interactions.
+Campaigns contain information about the promoted product, marketing channel, campaign period and responsible owner.
+
+Each campaign can generate multiple customer interactions and may influence subsequent quotes or purchases.
+
+---
+
+## Operator
+
+Represents Wossist employees involved in marketing campaigns and customer operations.
+
+Operators can belong to different business areas, including:
+
+- CRM
+- Digital Marketing
+- Contact Center
+- Management
+
+Operators can be associated with campaign ownership and operational activities.
+
+This entity allows the data model to support future analysis of campaign management and employee-related operations.
 
 ---
 
@@ -62,7 +101,7 @@ Represents interactions between Wossist and customers or prospects.
 
 Customer interactions describe how the company engages with customers through different communication channels.
 
-Examples:
+Examples include:
 
 - Email communications
 - Phone calls
@@ -70,6 +109,8 @@ Examples:
 - Digital interactions
 
 Each interaction can be associated with a marketing campaign when available.
+
+Interactions do not necessarily result in a quote or purchase.
 
 ---
 
@@ -85,6 +126,11 @@ Examples of analytics supported:
 - Quote-to-purchase conversion
 - Product interest
 - Customer drop-off points
+- Time between quote and purchase
+
+A quote may or may not result in a policy.
+
+Quote conversion status is not stored directly and can be calculated by matching quotes with purchased policies.
 
 ---
 
@@ -98,10 +144,15 @@ Main information includes:
 
 - Customer
 - Product
+- Originating quote
 - Purchase date
+- Coverage period
 - Sales channel
 - Premium value
-- Campaign attribution (when available)
+- Campaign attribution, when available
+- Product-specific attributes
+
+Each purchased policy originates from a quote.
 
 Sales channel and campaign attribution represent different concepts:
 
@@ -112,7 +163,7 @@ Sales channel and campaign attribution represent different concepts:
 
 ## Renewal
 
-Represents the renewal lifecycle of recurring insurance products.
+Represents a successful renewal event for recurring insurance products.
 
 Renewal data supports customer retention analysis, including:
 
@@ -121,33 +172,70 @@ Renewal data supports customer retention analysis, including:
 - Churn analysis
 - Customer lifetime value analysis
 
+Only successful renewals are stored as renewal events.
+
+Non-renewal and churn are derived analytically from policy expiration and renewal history.
+
 ---
 
 # Conceptual Relationships
+
+The Wossist data model connects customer behavior, marketing activities and commercial events.
 
 The main customer lifecycle can be represented as:
 
 ```text
 Customer
-    |
-    |
-Customer Interaction
-    |
-    |
-Campaign
-
-
-Customer
-    |
-    |
-Quote
-    |
-    |
-Policy
-    |
-    |
-Renewal
+   │
+   ├── Customer Interaction ─── Campaign ─── Operator
+   │
+   └── Quote
+         │
+         ▼
+       Policy
+         │
+         ▼
+       Renewal
 ```
+
+Products provide information about the insurance product associated with quotes and policies.
+
+Sales Channels identify where quotes and purchases are completed.
+
+Campaigns and Customer Interactions provide information about marketing activities and customer engagement.
+
+Operators provide information about campaign ownership and customer operations.
+
+---
+
+# Marketing and Sales Attribution
+
+Marketing activity and sales channels are modeled as separate concepts.
+
+A customer may interact with Wossist through a marketing channel and subsequently complete the purchase through a different sales channel.
+
+For example:
+
+```text
+Phone Campaign
+      │
+      ▼
+Customer Interaction
+      │
+      ▼
+Quote
+      │
+      ▼
+Website Purchase
+```
+
+In this scenario:
+
+- Marketing channel = Phone
+- Sales channel = Website
+- Campaign attribution = Phone campaign
+
+This separation allows marketing effectiveness and sales channel performance to be analyzed independently.
 
 ---
 
@@ -155,20 +243,46 @@ Renewal
 
 Campaign attribution can be directly linked when explicit information exists.
 
-Examples:
+Examples include:
 
 - Promo codes
 - Campaign identifiers
 - Tracking parameters
 - Sales campaign references
 
+When direct attribution is available, the campaign identifier can be associated with the quote and subsequent policy.
+
 When direct attribution is unavailable, analytical attribution rules can be applied based on customer interactions and purchase timing.
 
-Examples:
+Examples include:
 
 - Last interaction attribution
 - First interaction attribution
 - Time-window attribution
+
+This allows direct attribution and analytical attribution to remain conceptually separate.
+
+---
+
+# Derived Customer Analytics
+
+The source data model focuses on business entities and events rather than pre-calculated analytical classifications.
+
+Metrics and attributes that can be derived from customer behavior are therefore not stored directly in the core source tables.
+
+Examples include:
+
+- First purchase date
+- Quote conversion status
+- Customer purchase frequency
+- Recency
+- RFM segment
+- Cross-selling status
+- Renewal rate
+- Churn status
+- Customer lifetime value
+
+These elements can be calculated within individual analytics projects depending on the business question being investigated.
 
 ---
 
@@ -177,3 +291,13 @@ Examples:
 The Wossist data model is designed as an evolving business asset.
 
 New entities and data sources can be progressively introduced to support additional customer analytics scenarios.
+
+Potential future extensions include:
+
+- Customer feedback and surveys
+- Claims
+- Payment history
+- Web interactions
+- Additional customer operations data
+
+Extensions should maintain compatibility with the existing customer lifecycle model and preserve the distinction between source business events and derived analytical metrics.
