@@ -190,11 +190,13 @@ Registration date must always respect:
 registration_date <= first_purchase_date
 ```
 
-A customer cannot purchase a policy before being registered.
+A registered user cannot purchase a policy before being registered.
+
+Registered users without a purchase are retained in `customers.csv` and therefore do not have a first purchase date.
 
 First purchase date is not stored in `customers.csv`.
 
-It must be calculated from `policies.csv`.
+When applicable, it must be calculated from `policies.csv`.
 
 ---
 
