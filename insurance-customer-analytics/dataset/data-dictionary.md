@@ -16,11 +16,13 @@ Policy coverage dates may extend beyond the observation window when the correspo
 
 ## Granularity
 
-One row represents one customer.
+One row represents one registered user.
 
 ## Description
 
-Master customer table containing demographic and geographic information.
+Master registered user table containing demographic, geographic and acquisition information.
+
+A registered user may or may not become a purchasing customer. Purchasing customer status is derived analytically by identifying registered users with at least one policy in `policies.csv`.
 
 | Column | Data Type | Description | Rules |
 |---|---|---|---|
@@ -33,6 +35,7 @@ Master customer table containing demographic and geographic information.
 | region | String | Customer region of residence | Used for geographic analysis |
 | city | String | Customer city of residence | Used for mapping |
 | registration_date | Date | Date when customer entered the Wossist ecosystem | Must be <= first purchase date |
+| acquisition_channel | String | Channel through which the user was acquired | Paid Digital, Organic, Partner, Agency, Referral |
 
 ---
 
