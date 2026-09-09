@@ -2,7 +2,7 @@
 
 ## Overview
 
-The customer journey describes the main stages through which a customer interacts with Wossist, from the first marketing interaction to the long-term relationship with the company.
+The customer journey describes the main stages through which a user interacts with Wossist, from acquisition and initial engagement to insurance purchase and the long-term customer relationship.
 
 Understanding the customer lifecycle allows Wossist to analyze customer behavior, optimize marketing activities and improve customer retention.
 
@@ -12,33 +12,35 @@ Understanding the customer lifecycle allows Wossist to analyze customer behavior
 
 The Wossist customer journey is structured into the following stages:
 
-1. Customer Acquisition
-2. Customer Engagement
+1. User Acquisition
+2. User Engagement
 3. Quote Generation
 4. Policy Purchase
 5. Customer Relationship
 6. Renewal & Retention
-
 ---
 
-# 1. Customer Acquisition
+# 1. User Acquisition
 
-The customer enters the Wossist ecosystem through different acquisition channels.
+A user enters the Wossist ecosystem through different acquisition channels.
 
-Customers may discover Wossist through:
+Users may discover Wossist through:
 
 - Digital marketing activities
 - Partner channels
 - Website visits
 - Agency interactions
 
-At this stage, the company focuses on understanding where new customers come from and which channels generate valuable customers.
+Registration does not necessarily result in a purchase. A registered user may remain at the acquisition stage, progress to quote generation, or eventually become a purchasing customer.
+
+At this stage, the company focuses on understanding where new users come from, how the registered user base grows and which acquisition channels generate customers.
 
 Potential analytics:
 
-- New customer acquisition
-- Channel performance
-- Customer profile analysis
+- New user acquisition
+- User-to-customer conversion
+- Acquisition channel performance
+- User profile analysis
 
 ---
 
@@ -141,14 +143,16 @@ Retention activities may include:
 
 Each stage of the customer journey generates analytical data:
 
-Customer
-↓
+Registered User
+      ↓
 Customer Interaction
-↓
+      ↓
 Quote
-↓
-Policy
-↓
+      ↓
+Policy Purchase
+      ↓
+Purchasing Customer
+      ↓
 Renewal
 
 These events represent the foundation of the Wossist customer analytics ecosystem.
