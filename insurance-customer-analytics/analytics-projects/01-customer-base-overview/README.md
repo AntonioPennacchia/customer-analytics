@@ -85,11 +85,11 @@ The selected measure is analysed monthly and segmented by business line, allowin
 
 ### Policies Purchased
 
-![Business Evolution - Policies Purchased](./images/03-business-evolution.png)
+![Business Evolution - Policies Purchased](./images/03-business-evolution-policies.png)
 
 ### Total Premium
 
-![Business Evolution - Total Premium](./images/03-business-evolution2.png)
+![Business Evolution - Total Premium](./images/03-business-evolution-total-premium.png)
 
 ### Analytical Focus
 
