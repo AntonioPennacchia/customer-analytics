@@ -82,7 +82,9 @@ The initial data model includes information related to:
 - Renewals
 - Campaign and customer operations
 
-The different datasets are connected to reproduce the main stages of the customer lifecycle, from acquisition and marketing interaction to quote generation, policy purchase and renewal.
+The different datasets are connected to reproduce the main stages of the customer lifecycle, from user acquisition and marketing interaction to quote generation, policy purchase and renewal.
+
+Registered users do not necessarily become purchasing customers: some users may remain registered without requesting a quote, while others may request a quote without completing a purchase.
 
 Additional data sources such as payments, claims, customer feedback, surveys and web interactions may be introduced in future extensions.
 
