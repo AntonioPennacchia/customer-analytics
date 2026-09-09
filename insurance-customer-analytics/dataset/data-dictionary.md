@@ -34,7 +34,7 @@ A registered user may or may not become a purchasing customer. Purchasing custom
 | country | String | Customer country of residence | Mainly Italy |
 | region | String | Customer region of residence | Used for geographic analysis |
 | city | String | Customer city of residence | Used for mapping |
-| registration_date | Date | Date when customer entered the Wossist ecosystem | Must be <= first purchase date |
+| registration_date | Date | Date when the user entered the Wossist ecosystem | Must be <= first purchase date when a purchase exists |
 | acquisition_channel | String | Channel through which the user was acquired | Paid Digital, Organic, Partner, Agency, Referral |
 
 ---
