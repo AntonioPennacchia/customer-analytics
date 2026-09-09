@@ -115,7 +115,21 @@ Examples:
 
 Granularity:
 
-One row = one customer.
+One row = one registered user.
+
+A registered user does not necessarily become a purchasing customer.
+
+The registered user base includes:
+
+- users who register without requesting a quote;
+- users who register and request one or more quotes without purchasing;
+- users who purchase at least one insurance policy.
+
+A purchasing customer is defined analytically as a registered user with at least one policy in `policies.csv`.
+
+Registration-to-purchase conversion is not stored as a source attribute and must be calculated analytically.
+
+Conversion propensity may vary across acquisition channels, reflecting differences in user intent and acquisition quality.
 
 Fields:
 
@@ -128,6 +142,7 @@ Fields:
 - region
 - city
 - registration_date
+- acquisition_channel
 
 ---
 
