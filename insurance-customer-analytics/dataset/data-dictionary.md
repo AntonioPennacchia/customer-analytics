@@ -249,3 +249,5 @@ A policy must first become eligible for renewal within the relevant observation 
 - Churn is not stored and must be calculated analytically.
 - Renewals represent only successful renewals.
 - Marketing attribution and sales channel are separate concepts.
+- A registered user does not necessarily become a purchasing customer.
+- Purchasing customer status is derived from the presence of at least one policy.
