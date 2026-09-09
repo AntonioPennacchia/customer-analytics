@@ -14,9 +14,13 @@ The data ecosystem is designed as a shared analytical asset: different analytics
 
 ### Customers
 
-Customer master data.
+Registered user master data.
 
-Represents the Wossist customer base and contains demographic, geographic and acquisition information.
+Represents the Wossist registered user base and contains demographic, geographic and acquisition information.
+
+A registered user does not necessarily become a purchasing customer. Users may remain registered without requesting a quote, request one or more quotes without purchasing, or purchase at least one insurance policy.
+
+Purchasing customer status is derived analytically from the presence of at least one policy.
 
 ---
 
