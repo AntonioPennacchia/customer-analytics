@@ -29,7 +29,7 @@ This case study addresses three questions:
 | **Thu 7 – Fri 8 Jan** | Travel and Pet phone follow-up | **15%** on the relevant product |
 | **Through 14 Jan** | Proposed promotional validity window | Subject to final commercial approval |
 
-For this fictional scenario, **all customers in the analytical base are assumed to have valid, documented marketing permissions for the planned email, SMS and phone activities, including applicable profiling permissions**. This is a scenario assumption, not a fact demonstrated by the dataset. Operational use would still require appropriate lawful basis, channel-specific compliance, transparency, opt-out handling, and review of age-based selection. The general DEM is **not suppressed** for recipients of the later SMS or phone outreach. The targeted 15% offers are **not cumulative** with the standard 10% offer. The proposed campaign end date, discounts and commercial eligibility are planning assumptions, not facts observed in the source data.
+For this fictional scenario, **all customers in the analytical base are assumed to have valid, documented marketing permissions for the planned email, SMS and phone activities, including applicable profiling permissions**. This is a scenario assumption, not a fact demonstrated by the dataset. Operational use would still require appropriate lawful basis, channel-specific compliance, transparency, opt-out handling, and review of age-based selection. The general DEM is **not suppressed** for recipients of the later SMS or phone outreach. The targeted 15% offers are **not cumulative** with the standard 10% offer. The proposed campaign end date, discounts and commercial eligibility are planning assumptions, not facts observed in the source data. Consent for marketing communications and permission to process data are distinct considerations; the scenario assumes the relevant requirements have been addressed, without claiming that consent automatically permits any form of targeting.
 
 ### Illustrative promotion codes and campaign identifiers
 
@@ -111,14 +111,12 @@ The profiling output is derived from the prior customer segmentation and busines
 |---|---:|
 | Champions / preliminary SMS audience | **6,575** |
 | Champions with at least one historical Travel purchase | **4,834 (73.5%)** |
-| Champions aged 60–69 | **810** |
-| Champions aged 70+ | **243** |
-| Champions aged 65+ | **To be recalculated** (65–69 not separately reported) |
-| Maximum Travel phone attempts over two days | **80** |
+| Champions aged 65+ | **559** |
+| Maximum Travel phone selections over two days | **80** |
 | Phone selection | **Top 80 by Monetary Value among Champions aged 65+** |
-| Selected cohort age, RFM statistics and Travel purchase history | **To be recalculated under the revised rule** |
+| Selected customers with historical Travel purchases | **10 of 80 (12.5%)** |
 
-**Champions by age (available distribution):**
+**Champions by age (overall segment):**
 
 | Age | Customers |
 |---|---:|
@@ -130,16 +128,29 @@ The profiling output is derived from the prior customer segmentation and busines
 | 70+ | 243 |
 | **Total** | **6,575** |
 
-**Revised selection logic:**
+The **559 Champions aged 65+** are calculated directly from customer-level ages; they cannot be derived precisely from the broader age bands above.
+
+### Travel phone cohort — top 80 by Monetary Value, age 65+
+
+| Metric | Mean | Median | Minimum | Maximum |
+|---|---:|---:|---:|---:|
+| Age (years) | **69.16** | 68 | 65 | 78 |
+| Recency (days) | **78.19** | 86 | 0 | 167 |
+| Frequency (policies) | **2.25** | 2 | 2 | 6 |
+| Monetary Value (€) | **949.30** | 884.33 | 748.46 | 1,397.96 |
+
+Only **10 of the 80** selected Champions have a recorded Travel purchase. The remaining **70** are still Champions based on purchases across Wossist product lines; they represent potential Travel cross-selling opportunities, **not** demonstrated Travel interest or a predicted propensity to purchase.
+
+### Selection logic and operational rationale
 
 1. Filter customers with `rfm_segment = Champions`.
-2. Retain only customers with `customer_age >= 65`.
+2. Retain only customers with `customer_age >= 65` (**559 customers**).
 3. Sort by `monetary_value` descending, using `customer_id` ascending as a deterministic tie-breaker.
 4. Select up to **80** customers for telephone follow-up. The phone audience remains a subset of the Champions SMS audience, not additional unique recipients.
 
-**Business rationale:** outbound calls are planned during **09:00–18:00**, when some customers aged 65+ may be retired and potentially more available. This is a **testable operational hypothesis**, not evidence of retirement, availability or channel preference. Among that age-qualified pool, ranking by historical **Monetary Value** focuses limited operator capacity on customers with the largest recorded total premiums. Monetary Value is historical premium volume, **not profit, predicted conversion, or customer lifetime value**. The rule does not assume that older customers necessarily respond more often, and it would require appropriate compliance and fairness review in real deployment.
+**Business rationale:** outbound calls are planned during **09:00–18:00**, when some customers aged 65+ may be retired and potentially more available. This is a **testable operational hypothesis**, not evidence of retirement, availability or channel preference. Among that age-qualified pool, ranking by historical **Monetary Value** focuses limited operator capacity on customers with the largest recorded total premiums. Monetary Value is historical premium volume, **not profit, predicted conversion, or customer lifetime value**.
 
-**Important:** previously reported figures for the **80 oldest Champions** (age range 74–79, mean age 75.7, mean Monetary Value €339.80, and 63 with Travel purchase history) **do not apply to this revised selection**. They must not be presented as results for the top-Monetary-Value 65+ cohort. The exact new top-80 descriptive statistics require rerunning the selection on the customer-level dataset.
+Age-based prioritization is an illustrative campaign-planning rule, not a validated predictor of contactability. In a real deployment, Wossist would assess whether the criterion is justified, proportionate and consistent with applicable privacy, fairness and insurance-sector requirements, and test it against actual answer rates. Assumed marketing/profiling permissions alone do not establish that every targeting rule is appropriate.
 
 ## 6. Case study B — Pet quote follow-up
 
@@ -226,12 +237,12 @@ The **Champions segment is held fixed at the 31 December RFM classification** fo
 
 ## 10. Scope, assumptions and reproducibility
 
-**Measured in this project:** December customer/RFM counts, historical Travel purchases, Pet quote-based eligibility, overlap, priority allocation and preliminary phone selection.
+**Measured in this project:** December customer/RFM counts, historical Travel purchases, the 65+ Champions pool and selected Travel phone cohort statistics, Pet quote-based eligibility, overlap, priority allocation and preliminary phone selection.
 
 **Assumed for the scenario:** 10% and 15% offers, promotional codes and example URLs, 1–14 January offer window, 7–8 January staffing, 40 daily attempts per operator, Travel phone age threshold (65+) and Monetary Value ranking, Pet priority rules and the anniversary hypothesis. Financial approval and positive campaign economics would require separate verification.
 
-**Not measured or generated:** January purchases, verified operational contact lists and permission records, actual SMS deliveries, phone outcomes, conversions, incremental revenue, margin or ROI. The source data contain no independently verified email/phone reachability, SMS events, contact-permission records or channel preferences. For this fictional scenario, required permissions are **assumed** for all customers, not inferred from data availability.
+**Not measured or generated:** January purchases, verified operational contact lists and permission records, actual DEM/SMS deliveries, phone attempts or outcomes, conversions, incremental revenue, margin or ROI. The source data contain no independently verified email/phone reachability, SMS events, contact-permission records or channel preferences. For this fictional scenario, required permissions are **assumed** for all customers, not inferred from data availability.
 
-**Reproducibility:** The audience KPIs were calculated with Python from the GitHub-hosted customer profiling, Quotes and Policies data. A companion script can be maintained alongside this README (for example, `campaign_targeting_kpis.py`), rather than embedding hundreds of lines of code in the case study. The notebook/script should use the same snapshot date, Pet windows, product IDs, revised Travel 65+ and Monetary Value ranking, and exclusions documented above. The revised Travel phone descriptive statistics are intentionally left unreported until recalculated.
+**Reproducibility:** The audience KPIs were calculated with Python from the GitHub-hosted customer profiling, Quotes and Policies data. The documented selection rules, snapshot date, Pet windows, product IDs, Travel age threshold and Monetary Value ordering allow the analysis to be recreated. The calculation code used for this case study is not included in this Markdown file; publishing a companion script or notebook would provide full code-level reproducibility.
 
 *A possible future project could analyze campaign execution and outcomes, but no 2027 performance dataset or additional campaign table is created here.*
