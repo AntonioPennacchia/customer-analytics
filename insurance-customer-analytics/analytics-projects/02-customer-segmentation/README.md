@@ -9,6 +9,8 @@ Building on the Customer Base Overview project, the analysis focuses on understa
 
 The objective is to transform customer and transactional data into an explainable, customer-level analytical dataset that supports differentiated CRM and marketing analysis.
 
+The project also includes practical CRM campaign targeting case studies, demonstrating how customer segmentation results can support operational marketing decisions.
+
 All datasets are synthetic.
 
 ## Business Question
@@ -17,7 +19,7 @@ All datasets are synthetic.
 
 ## Analytical Framework
 
-The project is structured around two complementary analytical components.
+The project is structured around two complementary analytical components, followed by practical business applications.
 
 ### 01 — RFM Segmentation
 
@@ -48,13 +50,32 @@ Engagement Profiling instead retains independent numerical indicators, allowing 
 
 The framework covers both purchasing customers and registered users without policy purchases.
 
+### 03 — CRM Campaign Targeting Case Studies
+
+The analytical framework is applied to a hypothetical January 2027 marketing campaign, **New Year, New Adventures**.
+
+The case studies examine two complementary CRM targeting initiatives:
+
+- **Travel Champions:** personalized SMS communication and prioritized telephone follow-up for high-value customers identified through RFM segmentation.
+- **Pet Quote Follow-up:** identification and prioritization of customers with previous Pet quotations but no recorded Pet policy purchases.
+
+The analysis combines customer-level segmentation, purchasing history, quotation data, audience exclusion rules and operational contact capacity.
+
+It also explores campaign overlap and the allocation of limited telephone resources across prioritized customer groups.
+
+All audience metrics are derived from data available through **31 December 2026**. Campaign execution, promotional conditions and subsequent purchases are treated as hypothetical rather than observed outcomes.
+
+The full business scenarios, targeting methodology and analytical findings are documented in:
+
+**[Wossist Customer Segmentation Case Studies](wossist_customer_segmentation_case_studies.md)**
+
 ## Analytical Workflow
 
 The project follows a modular workflow:
 
-**Source Datasets → RFM Segmentation → Customer Business Profiling → Integrated Customer Dataset → Power BI**
+**Source Datasets → RFM Segmentation → Customer Business Profiling → Integrated Customer Dataset → CRM Case Studies**
 
-The analysis is developed through two Python notebooks:
+The analytical dataset is developed through two Python notebooks:
 
 - `01-rfm-segmentation.ipynb` — RFM methodology, scoring, segmentation and validation.
 - `02-customer-business-profiling.ipynb` — Product, Channel, Lifecycle and Engagement Profiling, followed by customer-level integration and validation.
@@ -65,6 +86,8 @@ Two analytical outputs are generated:
 - `customer_business_profiling.csv.gz` — integrated customer-level dataset containing business profiling attributes and RFM results.
 
 The integrated dataset includes all registered customers, with RFM attributes populated only for customers with recorded purchases.
+
+The CRM case studies use the integrated profiling dataset together with relevant source transactions to evaluate campaign audiences and targeting priorities.
 
 The original source datasets remain unchanged.
 
@@ -84,15 +107,23 @@ The analysis highlights several characteristics of the Wossist customer base:
 - Most purchasing customers have recorded only one policy purchase.
 - Recorded marketing interactions are available for approximately one-quarter of the registered customer base.
 
-These findings provide a foundation for exploring customer groups, identifying cross-selling opportunities and comparing purchasing behaviour with observed marketing responsiveness.
+### CRM Targeting Highlights
 
-## Power BI Reporting & Case Studies
+The campaign targeting case studies identify:
 
-The integrated dataset is designed for interactive reporting in Power BI.
+| Metric | Result |
+|---|---:|
+| RFM Champions | 6,575 |
+| Champions with Travel purchase history | 4,834 |
+| Travel telephone follow-up selection | 80 |
+| Pet targeting audience after exclusions | 31,669 |
+| Pet telephone follow-up selection | 160 |
+| Champions excluded from Pet targeting due to overlap | 760 |
+| Unique personalized campaign audience | 6,735 |
 
-The report will bring together RFM segmentation, business profiling and dedicated CRM case studies, combining visual analysis with business interpretation directly within the reporting experience.
+These results illustrate how customer-level analytics can be translated into actionable audience selection, campaign prioritization and contact capacity planning.
 
-The customer-level dataset supports filtering and cross-analysis across product ownership, sales channels, lifecycle stages, customer characteristics and engagement indicators.
+The figures represent preliminary analytical audiences, before marketing consent, contactability and January 2027 purchase checks.
 
 ## Project Structure
 
@@ -101,10 +132,10 @@ The customer-level dataset supports filtering and cross-analysis across product 
 ├── README.md
 ├── 01-rfm-segmentation.ipynb
 ├── 02-customer-business-profiling.ipynb
-├── output/
-│   ├── customer_rfm.csv.gz
-│   └── customer_business_profiling.csv.gz
-└── wossist-customer-segmentation.pbix
+├── wossist_customer_segmentation_case_studies.md
+└── output/
+    ├── customer_rfm.csv.gz
+    └── customer_business_profiling.csv.gz
 ```
 
 ## Data Sources
@@ -115,12 +146,14 @@ The source data includes customer registrations, policies, quotations, products,
 
 The previously generated RFM output is also used as an input to the Customer Business Profiling notebook.
 
+The CRM case studies additionally use quotation and policy records to evaluate product-specific targeting eligibility and customer purchase history.
+
 ## Tools
 
 - **Python:** pandas, NumPy
-- **Jupyter Notebook:** data preparation, analytical methodology and validation
-- **Power BI:** interactive reporting and CRM case studies
+- **Jupyter Notebook:** data preparation, segmentation, profiling and analytical validation
 - **GitHub:** project documentation and version control
+- **Markdown:** business case study documentation and presentation of analytical findings
 
 ---
 
